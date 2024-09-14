@@ -1,27 +1,38 @@
-from dotenv import load_dotenv
-import streamlit as st
-from streamlit_extras import add_vertical_space as avs
-import google.generativeai as genai
 import os
-import PyPDF2
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from PIL import Image
+import streamlit as st
 
-# Load environment variables
-load_dotenv()
+# Importing dotenv safely
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    st.error("The 'dotenv' package is missing. Please install it using 'pip install python-dotenv'.")
 
-EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')  # Your email address
-EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')  # Your email password
+# Import other necessary modules
+try:
+    import google.generativeai as genai
+    from streamlit_extras import add_vertical_space as avs
+    import PyPDF2
+    import smtplib
+    from email.mime.text import MIMEText
+    from email.mime.multipart import MIMEMultipart
+    from PIL import Image
+except ImportError as e:
+    st.error(f"Module {str(e).split()[-1]} is missing. Please install it using the appropriate pip install command.")
 
-# Check if the environment variables are correctly loaded
-if EMAIL_ADDRESS is None or EMAIL_PASSWORD is None:
-    st.error("Error: Email credentials not found. Check your .env file.")
+# Ensure email credentials are loaded
+EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
+EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 
-# Configure Generative AI
-genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
-model = genai.GenerativeModel('gemini-pro')
+if not EMAIL_ADDRESS or not EMAIL_PASSWORD:
+    st.error("Email credentials are missing. Please ensure they are present in the .env file.")
+
+# Configure Google Generative AI
+try:
+    genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
+    model = genai.GenerativeModel('gemini-pro')
+except Exception as e:
+    st.error(f"Error with Google API configuration: {e}")
 
 # Function to generate response from Gemini model
 def get_gemini_response(input):
@@ -36,7 +47,7 @@ def get_gemini_response(input):
 def input_pdf_text(uploaded_file):
     try:
         reader = PyPDF2.PdfReader(uploaded_file)
-        text = ''
+        text = ""
         for page_num in range(len(reader.pages)):
             page = reader.pages[page_num]
             text += str(page.extract_text())
@@ -47,7 +58,6 @@ def input_pdf_text(uploaded_file):
 
 # Streamlit UI Introduction
 st.set_page_config(page_title="Resume ATS Tracker", layout="wide")
-
 avs.add_vertical_space(4)
 
 # CareerCraft Introduction
@@ -57,8 +67,8 @@ with col1:
     st.header("Navigate the Job Market with Confidence!")
     st.markdown("""
     <p style='text-align: justify;'>Introducing CareerCraft, an ATS-Optimized Resume Analyzer - your ultimate solution for optimizing job applications and accelerating
-    career growth. Our innovative platform leverages advanced ATS technology to provide job seekers with valuable insights into their resume compatibility with job descriptions.
-    From resume optimization and skill enhancement to career progression guidance, CareerCraft empowers users to stand out in today's competitive job market.</p>""", unsafe_allow_html=True)
+    career growth. Our innovative platform leverages advanced ATS technology to provide job seekers with valuable insights into their resume compatibility with job descriptions.</p>
+    """, unsafe_allow_html=True)
 
 with col2:
     st.image('https://cdn.dribbble.com/userupload/12500996/file/original-b458fe398a6d7f4e9999ce66ec856ff9.gif', use_column_width=True)
@@ -108,11 +118,6 @@ with col2:
 
     st.write("**Question**: Can CareerCraft suggest improvements for my resume?")
     st.write("**Answer**: Yes, CareerCraft provides personalized recommendations to optimize your resume for specific job openings.")
-
-    avs.add_vertical_space(3)
-
-    st.write("**Question**: Is CareerCraft suitable for both entry-level and experienced professionals?")
-    st.write("**Answer**: Absolutely! CareerCraft caters to job seekers at all career stages, offering tailored insights and guidance.")
 
 with col1:
     img3 = Image.open("images/icon3.jpg")
