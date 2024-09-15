@@ -3,7 +3,7 @@
 Overview
 CareerCraft is a cutting-edge application designed to revolutionize the job application process using advanced ATS (Applicant Tracking System) technology. This innovative system empowers job seekers by providing valuable insights into their resumes' compatibility with job descriptions, identifying missing keywords, and offering tailored profile summaries. CareerCraft helps users optimize their resumes for better presentation to potential employers, thus enhancing their chances in a competitive job market.
 
-DEMO link:-https://ats-optimized-resume-analyzer-using.onrender.com/
+DEMO link:-https://ats-optimized-resume-analyzer-using-gemini.streamlit.app/
 
 Features
 ATS Compatibility Scoring: Analyzes resumes against job descriptions and provides a percentage match score.
